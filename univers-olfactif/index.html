@@ -797,7 +797,7 @@ body.from-lift .lbl-hall, body.from-lift .others-hall, body:not(.from-lift) .lbl
         <button class="floor" type="button" data-room="niche" aria-label="Niveau −3 : Niche, 33 parfums"><span class="fb">−3</span><span class="fl">Niche<small>33 parfums · dès 80 €</small></span></button>
         <button class="floor" type="button" data-room="collections-privees" aria-label="Niveau −4 : Collections Privées, 19 parfums"><span class="fb">−4</span><span class="fl">Collections Privées<small>19 parfums · dès 110 €</small></span></button>
         <button class="floor f-reserve" type="button" data-room="reserve" aria-label="Niveau −5 : La Réserve, personnel uniquement"><span class="fb">−5</span><span class="fl">La Réserve<small>Personnel uniquement</small></span><span class="lock" aria-hidden="true"><i class="shackle"></i><i class="body"></i></span></button>
-        <div class="keypad" hidden role="dialog" aria-label="Code d’accès de La Réserve" data-h="1yess1p" data-cache='{"sel":"YN3ad0BdacWdUKceNgIhiA==","iv":"8FNpfPl60c6JEO3a","donnees":"94jX0RFUadgoQ8UZChliBSmkvqhEJ4l7SZcXObi2vBNZk312lT1ywTIu4wpvYBL89btbrA5J7na+hEi2b5QWKDh/u8PjGSTxoIaG5FLlagX8Ib7ITclgLoEDTh829oIvXTG5HOiyZDZztO2AZsvFdJ8KGcdQZHwl6RLnMfiaRHxD/wRQ0muvEE0FHXQCfHFVJ6X3phvolCZAkEHmgrHDp67aVD4JWV/pORlz1KALh/Yr2d7AWbe/OY+69J3SG+jp6WyIKvkhdytFvBFntopLLisUMbJcnPCkOrP8NcclFar2nLN16XHsyoOukfxO/aqWqU+Rs2FPxKvvvSRufnfbs7AyTruNiLXbSvjNPR6vHRps/uUKi6I2KxF3EFP50ctKXrIHzvL3XoGV8lJFneMBCvoB7JPeE58kf+kIrL7LAwxES7t40Vbd7nhwGE654F3vs6iG3oZyDK/3LNFbL+DCWgBsqJ7Bli4Dy3OEnP014jm9wQnxJlHXJzYFPUlGHl0TqlMZeIpcjJnvJrfBl0QY60sOotdnERasXzADKpbfvqOs2UHRkTgechqaNGq6+GpX0ss8xX68fvc=","iterations":200000}'>
+        <div class="keypad" hidden role="dialog" aria-label="Code d’accès de La Réserve" data-h="1yess1p" data-cache='{"sel":"JLKYPIFomMi4KquX5IgfMg==","iv":"xzLdaQ1KSpjmFUMM","donnees":"gy95KiDpz8/aFHeMXmxqU41YYWwp7SxsRIIZMOloHSdCG2mWavD5t5SAwAiwXh0KE0UOPXYpZi8ABdBNSUBtR/xa9su11gIj+X8r815aSXjRKet1rzaHS7uSnndhdMRvJ1WjIeyInmcoDGFrhFzcHKzDf3Eiva23S7b+IeRQLzDC+UhZeY9ZCVqbWHP9l+sLQi6/OBt0MNRJHMOcF28qJxNqKtGXi18cTmgpndmOAnMNUeO/97GYpZ5tEg3tDFmiIeiCQ7FpBtiezK8navv4VJ543VBprVAXuoDVD6co5RXYmwyh6WRwkco9M7OtKwWsbmafnnBzmJul4cDvDxqgkGmubTC/NNTzmjOUzf3DalZmlQEpTD40QnXWsckpVX+pHLC+NYPrULFV8BgE8+jqcRoALDeNNwik+5uoAB4Xp1Q+lgrInrhJUM/zsTmRq/1k5SWdMQDpWdqWEkUa5hpYoYhsxsmqGvL/6tJZumK0z4AeeS1ONR2QOhM/Y6s9okrcg5zr5KRhsWIYBxU8TBLFxJ0wRtjJKvMomY1K/2Il0vQek4hLLuuhCbL9eGWfD58NzIKuZ3rz4fM=","iterations":200000}'>
           <p class="eyebrow">Niveau −5</p>
           <p class="kp-title">La Réserve</p>
           <p class="kp-sub">Réservé au personnel</p>
@@ -2493,18 +2493,16 @@ window.Corridor3D = function (root, opts) {
 
   // ---------- La Réserve : le code d'accès (un pavé dans l'ascenseur) ----------
   const keypad = $('.keypad', V.ascenseur), plate = $('.plate', V.ascenseur), kpDots = $$('.kp-dots i', keypad), kpMsg = $('.kp-msg', keypad);
-  const RES_KEY = 'selection-parfums-reserve';
   const fnv = str => { let h = 0x811c9dc5; for (const c of str) { h ^= c.charCodeAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(36); };
   let code = '', askCode = false, resOk = false, verifie = false;
   const CODE_MIN = 4, CODE_MAX = 8;
-  try { resOk = sessionStorage.getItem(RES_KEY) === keypad.dataset.h; } catch (e) {}
   const reserveOpen = () => resOk;
   const resBtn = $('.floor.f-reserve', V.ascenseur);
   const syncLock = () => resBtn.classList.toggle('open', resOk);
   syncLock();
-  // la Réserve se verrouille dès qu'on change d'étage : comme la clé d'un ascenseur, on la remet à chaque fois
+  // la Réserve se verrouille dès qu'on en sort : comme la clé d'un ascenseur, on la remet à chaque fois
   function verrouillerReserve() {
-    resOk = false; try { sessionStorage.removeItem(RES_KEY); } catch (e) {}
+    resOk = false;
     syncLock();
   }
   const kpDotsBox = $('.kp-dots', keypad);
@@ -2553,7 +2551,7 @@ window.Corridor3D = function (root, opts) {
     verifie = true;
     try {
       if (fnv(code) === keypad.dataset.h) {
-        resOk = true; try { sessionStorage.setItem(RES_KEY, keypad.dataset.h); } catch (e) {}
+        resOk = true;
         keypad.classList.add('good'); kpMsg.textContent = 'Bienvenue dans La Réserve';
         setTimeout(syncLock, 120);
         setTimeout(() => { closeKeypad(); keypad.classList.remove('good'); goto('reserve'); }, fast() ? 0 : 650);
@@ -2678,6 +2676,7 @@ window.Corridor3D = function (root, opts) {
   }
   function hideRoom() {
     if (!room) return;
+    if (room === 'reserve') verrouillerReserve();
     const r = rooms[room];
     r.hidden = true; r.getAnimations().forEach(a => a.cancel());
     V[view].classList.remove('under');
